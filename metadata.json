@@ -1,0 +1,5 @@
+{
+  "name": "Nexus API Gateway",
+  "description": "A centralized service hub and API gateway with API key authentication for internal microservices.",
+  "requestFramePermissions": []
+}
