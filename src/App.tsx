@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -159,7 +160,7 @@ const ServicesTab = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/services');
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/services`);
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const data = await res.json();
       setServices(data);
@@ -306,7 +307,7 @@ const ApiKeysTab = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/keys');
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/keys`);
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const data = await res.json();
       // Support both string[] and ApiKey[]
@@ -327,7 +328,7 @@ const ApiKeysTab = () => {
   const generateKey = async () => {
     setGenerating(true);
     try {
-      const res = await fetch('/api/keys', { method: 'POST' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/keys`, { method: 'POST' });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       const data = await res.json();
       const newKey: ApiKey = typeof data === 'string' ? { key: data } : { key: data.key, ...data };
@@ -341,7 +342,7 @@ const ApiKeysTab = () => {
 
   const deleteKey = async (key: string) => {
     try {
-      await fetch(`/api/keys/${encodeURIComponent(key)}`, { method: 'DELETE' });
+      await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/keys/${encodeURIComponent(key)}`, { method: 'DELETE' });
       setApiKeys(prev => prev.filter(k => k.key !== key));
     } catch (e: any) {
       setError(e.message ?? 'Failed to revoke key');
@@ -474,7 +475,7 @@ const AnalyticsTab = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/analytics');
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/analytics`);
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       setData(await res.json());
     } catch (e: any) {
