@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "vite",
+    "dev:server": "tsx server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
     "clean": "rm -rf dist"
   },
   "dependencies": {

@@ -1,13 +1,17 @@
-import express from 'express';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { GoogleGenAI } from '@google/genai';
-import cors from 'cors';
-const app = express();
-app.use(cors({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const uuid_1 = require("uuid");
+const genai_1 = require("@google/genai");
+const cors_1 = __importDefault(require("cors"));
+const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
     origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
 }));
-app.use(express.json());
+app.use(express_1.default.json());
 // --- In-Memory Database ---
 // In a real app, this would be a database like PostgreSQL, MongoDB, or Redis.
 const apiKeys = new Set(['dev-key-123']);
@@ -42,7 +46,7 @@ app.get('/api/keys', (req, res) => {
     res.json(Array.from(apiKeys));
 });
 app.post('/api/keys', (req, res) => {
-    const newKey = `sk_${uuidv4().replace(/-/g, '')}`;
+    const newKey = `sk_${(0, uuid_1.v4)().replace(/-/g, '')}`;
     apiKeys.add(newKey);
     res.json({ key: newKey });
 });
@@ -74,7 +78,7 @@ app.post('/gateway/echo', requireApiKey, (req, res) => {
 });
 app.get('/gateway/random', requireApiKey, (req, res) => {
     res.json({
-        id: uuidv4(),
+        id: (0, uuid_1.v4)(),
         randomValue: Math.floor(Math.random() * 10000),
         timestamp: new Date().toISOString()
     });
@@ -82,7 +86,7 @@ app.get('/gateway/random', requireApiKey, (req, res) => {
 app.post('/gateway/ai', requireApiKey, async (req, res) => {
     try {
         const prompt = req.body.prompt || 'Say hello';
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const ai = new genai_1.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
             contents: prompt,
@@ -93,12 +97,11 @@ app.post('/gateway/ai', requireApiKey, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-// --- Static Serving ---
+// --- Server Start ---
 async function startServer() {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(distPath, 'index.html'));
+    // Catch-all 404 for any undefined API routes
+    app.use('*', (req, res) => {
+        res.status(404).json({ error: 'Endpoint not found' });
     });
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
     app.listen(PORT, '0.0.0.0', () => {
