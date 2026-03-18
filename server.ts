@@ -103,12 +103,11 @@ app.post('/gateway/ai', requireApiKey, async (req, res) => {
   }
 });
 
-// --- Static Serving ---
+// --- Server Start ---
 async function startServer() {
-  const distPath = path.join(process.cwd(), 'dist');
-  app.use(express.static(distPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
+  // Catch-all 404 for any undefined API routes
+  app.use('*', (req, res) => {
+    res.status(404).json({ error: 'Endpoint not found' });
   });
 
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;

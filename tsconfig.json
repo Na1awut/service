@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "module": "commonjs",
     "outDir": "dist",
-    "rootDir": ".",
-    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": false
   },
-  "include": ["server.ts"]
+  "include": ["src", "server.ts"]
 }
