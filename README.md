@@ -1,20 +1,56 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Nexus API Gateway
 
-# Run and deploy your AI Studio app
+A small API gateway and dashboard, created with Google AI Studio. It offers API key management and three sample services behind key authentication.
 
-This contains everything you need to run your app locally.
+> This is a prototype. Keys are stored in memory, the management endpoints have no authentication, and the default key is public. Do not expose it to the internet as is. The figures and pricing on the landing page are placeholder content.
 
-View your app in AI Studio: https://ai.studio/apps/dc7afdd0-7adf-4bc1-ba79-95bf113f1d6b
+## Services
 
-## Run Locally
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/gateway/echo` | Returns the JSON payload you send |
+| `GET` | `/gateway/random` | Returns a random UUID and number |
+| `POST` | `/gateway/ai` | Generates text with Gemini from `{ "prompt": "..." }` |
 
-**Prerequisites:**  Node.js
+Send the key in the `x-api-key` header or the `apiKey` query parameter.
 
+Management endpoints:
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/services` | List services |
+| `GET` | `/api/keys` | List API keys |
+| `POST` | `/api/keys` | Create an API key |
+| `DELETE` | `/api/keys/:key` | Revoke an API key |
+
+## Getting started
+
+Node.js is required.
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Set `GEMINI_API_KEY` in `.env.local`. Only `/gateway/ai` needs it.
+
+Run the API and the web app in separate terminals:
+
+```bash
+npm run dev:server
+npm run dev
+```
+
+Try it with the development key:
+
+```bash
+curl -H "x-api-key: dev-key-123" http://localhost:3000/gateway/random
+```
+
+## Production build
+
+`npm run build` builds the web app and the server. `npm start` runs the compiled API server from `dist/server.js`, and the static web app in `dist/` must be hosted separately.
+
+## Tech stack
+
+React 19, TypeScript, Vite, Tailwind CSS, Express and the Google Gen AI SDK.
